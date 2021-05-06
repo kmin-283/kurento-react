@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  width: 5em;
+  height: 5em;
+  background-color: lightslategray;
+  justify-content: center;
+  align-items: center;
+}
+
+.button {
+  width: 70%;
+  height: 70%;
+  font-size: large;
+  font-weight: 700;
+  border-radius: 50%;
+  border-style: none;
+}
+
+.button:hover {
+  color: deepskyblue;
+  font-size: large;
+  font-weight: 700;
+  background-color: bisque;
+}

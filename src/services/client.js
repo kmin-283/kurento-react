@@ -1,18 +1,22 @@
 "use strict";
 import { io } from "socket.io-client";
 import { WebRtcPeer } from "kurento-utils";
+import adapter from "webrtc-adapter";
 
 class SignalApp {
   constructor() {
+    const regex = /(^https?):\/\/\w+(:[0-9]*)?\/?/;
+    const lastIdx = regex.exec(window.location.href)[0].length;
+    this._currentLocation = window.location.href.slice(lastIdx - 1);
     this.socket = io("https://localhost:8443");
     this.roomName = "";
     this.userName = "";
     this._participants = {};
-    this.video = null;
     this.user = {};
 
     this.socket.emit("message", {
       event: "createUser",
+      currRoom: this._currentLocation,
     });
 
     this.socket.on("message", (message) => {
@@ -50,12 +54,18 @@ class SignalApp {
   get participants() {
     return this._participants;
   }
+  get currentLocation() {
+    return `${window.location.href}${this.roomName}`;
+  }
 
   requestRoom(userName) {
+    const room =
+      this._currentLocation.length > 1 ? this._currentLocation.slice(1) : "";
     this.userName = userName;
 
     this.socket.emit("message", {
       event: "createRoom",
+      room: room,
     });
   }
 
@@ -70,23 +80,16 @@ class SignalApp {
   }
 
   async receiveVideo(userid, username) {
-    let video = document.createElement("video");
-    video.id = userid;
-    video.autoplay = true;
-
     let user = {
       id: userid,
+      type: "remote",
       username: username,
-      video: video,
       rtcPeer: null,
     };
 
     this._participants[user.id] = user;
 
-    console.log(this._participants);
-
     const options = {
-      remoteVideo: video,
       onicecandidate: (candidate) => {
         this.socket.emit("message", {
           event: "candidate",
@@ -112,21 +115,16 @@ class SignalApp {
   }
 
   async onExistingParticipants(userid, existingUsers) {
-    let video = document.createElement("video");
-    video.id = userid;
-    video.autoplay = true;
-
     let user = {
       id: userid,
+      type: "local",
       username: this.userName,
-      video: video,
       rtcPeer: null,
     };
 
     this._participants[user.id] = user;
 
     let options = {
-      localVideo: video,
       onicecandidate: (candidate) => {
         this.socket.emit("message", {
           event: "candidate",
@@ -147,7 +145,7 @@ class SignalApp {
       });
     });
 
-    existingUsers.forEach(function (existingUser) {
+    existingUsers.forEach((existingUser) => {
       this.receiveVideo(existingUser.id, existingUser.name);
     });
   }

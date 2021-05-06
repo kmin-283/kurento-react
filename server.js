@@ -43,12 +43,6 @@ let io = require("socket.io")(server, {
 
 app.use(cors());
 
-// app.get("/", (req, res) => {
-//   res.sendFile(path.join(__dirname, "public", "index.html"));
-// });
-
-// app.use(express.static("public"));
-
 io.on("connection", (socket) => {
   socket.on("message", (message) => {
     switch (message.event) {
@@ -56,7 +50,7 @@ io.on("connection", (socket) => {
         createUser(socket);
         break;
       case "createRoom":
-        createRoom(socket);
+        createRoom(socket, message.room);
         break;
 
       case "joinRoom":
@@ -110,9 +104,11 @@ function createUser(socket) {
   });
 }
 
-function createRoom(socket) {
-  const roomName = uuidv4();
-
+function createRoom(socket, room) {
+  let roomName = room;
+  if (!room) {
+    roomName = uuidv4();
+  }
   socket.emit("message", {
     event: "roomCreated",
     roomName: roomName,
@@ -238,7 +234,6 @@ function receiveVideoFrom(socket, userid, roomname, sdpOffer, callback) {
       if (err) {
         return callback(err);
       }
-
       socket.emit("message", {
         event: "receiveVideoAnswer",
         senderid: userid,

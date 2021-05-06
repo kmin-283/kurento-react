@@ -1,0 +1,12 @@
+.container {
+  height: 50%;
+  width: 50%;
+}
+
+.li {
+  list-style: none;
+}
+
+.video {
+  border-radius: 10px;
+}

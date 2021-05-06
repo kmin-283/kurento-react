@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 20rem;
+  width: 30rem;
+  background-color: aliceblue;
+  border-radius: 15px;
+  align-items: center;
+}
+
+.input {
+  margin-top: 4em;
+  height: 50%;
+  width: 80%;
+  border-radius: 15px;
+  border-style: solid;
+  border-color: lightskyblue;
+}
+
+.button {
+  margin-top: 2em;
+  margin-left: 15em;
+  height: 15%;
+  width: 30%;
+  border-radius: 15px;
+  border-style: solid;
+  border-color: cornflowerblue;
+  text-decoration: none;
+}

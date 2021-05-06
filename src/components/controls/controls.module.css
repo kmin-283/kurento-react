@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  width: 100%;
+  /* justify-content: space-around; */
+}
+
+.ul {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
